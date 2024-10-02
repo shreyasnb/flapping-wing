@@ -1,0 +1,113 @@
+% page.styl
+\usepackage{times} % Use Times New Roman font
+\usepackage[utf8]{inputenc} % Support for UTF-8 input encoding
+\usepackage[margin=0.7in]{geometry} % Set page margins
+\usepackage{setspace} % For line spacing
+\usepackage{titlesec} % For section title formatting
+\usepackage[normalem]{ulem} % For underlining text
+\usepackage{float} % Improved float control
+\usepackage{graphicx} % Include graphics
+\usepackage{wrapfig} % Wrap text around figures
+\usepackage{lineno} % Line numbers
+\usepackage{ifthen} % Conditional commands
+\usepackage{cite} % Improved citation handling
+\usepackage{xparse} % Advanced command parsing
+\usepackage{xpatch}
+\usepackage{etoolbox}
+
+
+% Figures
+\graphicspath{{./figures/}{./images/}}
+% Customize the graphicx package to set default options globally
+\makeatletter
+\NewDocumentCommand{\graphicxGlobalKeys}{ s +m }{%
+  \IfBooleanTF{#1}{%
+    \appto\Gin@opt@append{#2}%
+  }{%
+    \appto\Gin@opt@prefix{#2}%
+  }%
+}
+\let\Gin@opt@prefix\@empty
+\let\Gin@opt@append\@empty
+
+\xpatchcmd\Gin@ii
+  {\setkeys{Gin}{#1}}
+  {%
+    \expandafter\expandafter\expandafter\setkeys@three
+    \expandafter\expandafter\expandafter{%
+    \expandafter\Gin@opt@prefix
+    \expandafter}%
+    \expandafter{\Gin@opt@append}{#1}{Gin}%
+  }
+  {}{\fail}
+
+% #1 = prefix, #2 = append, #3 = local, #4 = key family
+\def\setkeys@three#1#2#3#4{%
+  \setkeys{#4}{#1,#3,#2}%
+}
+\makeatother
+
+% Set default width for graphics
+% change me to change the default width
+\graphicxGlobalKeys{width=0.5\textwidth}
+
+% Set line spacing to single
+\singlespacing
+
+% Define the heading style: inline Bold and underlined
+\titleformat{\section}[runin]
+  {\normalfont\normalsize\bfseries}
+  {}{0em}{}
+
+\titleformat{\subsection}[runin]
+  {\normalfont\normalsize\bfseries}
+  {}{0em}{}
+
+\titleformat{\subsubsection}[runin]
+  {\normalfont\normalsize\bfseries}
+  {}{0em}{}
+
+% Adjust space before and after section headings
+\titlespacing{\section}{0pt}{*0}{0.7em}
+\titlespacing{\subsection}{0pt}{*0}{0.5em}
+\titlespacing{\subsubsection}{0pt}{*0}{0.3em}
+
+% Remove paragraph indentation
+\setlength{\parindent}{0pt}
+
+% Adjust word spacing
+\spaceskip=0.3em
+\xspaceskip=0.3em
+
+% Default settings for wrapped figures
+\setlength{\intextsep}{10pt} % Space above and below in-line text
+\setlength{\columnsep}{20pt} % Space between column and figure
+
+% Allow hyphenation
+\hyphenpenalty=5000
+\tolerance=1000
+
+% Add extra flexibility to line breaks
+\emergencystretch=.4em
+
+% Remove title page, header, and footer
+\pagestyle{plain}
+
+% Bibliography
+\bibliographystyle{plain} % You can use other styles such as abbrv, alpha, etc.
+
+% Custom commands
+\newcommand{\TODO}[1]{\ignorespaces} % Inline TODO comments
+\newcommand{\COMMENT}[1]{\ignorespaces} % Inline comments
+\newcommand{\figref}[1]{Fig. \ref{#1}}
+
+
+\newboolean{draft}
+
+% Enables specifc styling for draft
+% Set to False to hide the line nos 
+\setbool{draft}{true}
+% Include line numbers if true
+\ifthenelse{\boolean{draft}}{
+  \linenumbers
+}{}
